@@ -1,6 +1,6 @@
 <?php
 session_start();
-echo "github";
+echo "github,haha";
 require 'cauhinh.php';
 $id = $_GET['item'];
 if(isset($_SESSION['cart'][$id])){
