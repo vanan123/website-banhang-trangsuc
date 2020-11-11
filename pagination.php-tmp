@@ -1,0 +1,17 @@
+<?php
+require 'cauhinh.php';
+$sql        = "SELECT count(maloaitrangsuc) as 'total' from trangsuc ";
+$kq         = mysqli_query($conn, $sql);
+$row        = mysqli_fetch_assoc($kq);
+$total_rc   = $row['total'];
+$cr_page    = isset($_GET['page'])?($_GET['page']):1;
+$limit      = 10;
+$total_page = ceil($total_rc/$limit);
+if ($cr_page > $total_page) {
+	$cr_page = $total_page;
+} else if ($cr_page < 1) {
+	$cr_page = 1;
+}
+$start = ($cr_page-1)*$limit;
+?>
+

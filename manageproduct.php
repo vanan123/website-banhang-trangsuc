@@ -1,0 +1,104 @@
+<?php
+require 'cauhinh.php';
+session_start();
+if($_SESSION['quyen']!='1'){
+       echo '<script language="javascript">alert("Bạn không phải là admin"); 
+  window.location="login.php"</script>';
+}
+require 'pagination.php'; 
+ ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Quản lý trang sức</title>
+	<link href="assets/css/bootstrap.css" rel="stylesheet"/>
+ 	  <link rel="shortcut icon" href="assets/ico/favicon.ico">
+       <script src="assets/js/jquery.js"></script>
+	<link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet">
+</head>
+<body>
+	<?php require 'header.php'; ?>
+	 <h1 class="text-center mt-2">Quản lý hàng hóa</h1>
+    <main>
+        <div class="container">
+            <div class="table-responsive-md">
+                <table class="table table-hover table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tên trang sức</th>
+                            <th>ID danh mục</th>
+                            <th>Số lượng</th>
+                            <th>Đơn giá</th>
+                            <th>Thương hiệu</th>
+                            <th>Trọng lượng</th>
+                            <th>Tuổi vàng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                            $query = "SELECT * FROM trangsuc limit $start,$limit ";
+                            $rs = mysqli_query($conn, $query);
+                            
+                            while($row = mysqli_fetch_assoc($rs)) {
+                                echo '<tr>
+                                        <td>'.$row['matrangsuc'].'</td>
+                                        <td><a href="product_details.php?idtrangsuc='.$row['matrangsuc'].'">'.$row['tentrangsuc'].'<br><img src="'.$row['hinhanh'].'" alt="anh" width="100" height="70"> </a></td>
+                                        <td>'.$row['maloaitrangsuc'].'</td>
+                                        <td>'.$row['soluong'].'</td>
+                                        <td>'.$row['giaban'].'</td>
+                                        <td>'.$row['Thuonghieu'].'</td>
+                                        <td>'.$row['Trongluong'].'</td>
+                                        <td>'.$row['Tuoivang'].'</td>
+                                        <td>
+                                            <div class="mb-1">
+                                                <form action ="delete.php" method="GET">
+                                                    <input  type="hidden" name="idtrangsuc" value="'.$row['matrangsuc'].'">
+                                                    <input class="btn btn-danger" type="submit" name="delete-product" value="Xóa">   
+                                                </form>
+                                            </div>
+                                            <div>
+                                                <a href="editproduct.php?idtrangsuc='.$row['matrangsuc'].'" class="btn btn-primary">Sửa</a> 
+
+                                            </div>
+                                        </td>
+                                    </tr>';
+                            }
+			
+    ?>
+         
+                    </tbody>  
+                </table>
+                <div class="btn-add">
+                    <button class="btn btn-success delete" type="button"><a href="addproduct.php"><h5>Thêm sản phẩm</h5></a></button>
+                </div>
+            </div>
+            <?php 
+            	 echo'<hr class="soften"/>
+  <div class="center">
+  	<div class="pagination">';
+		if($cr_page > 1 && $total_page > 1){
+	 echo'<a class="page-link" href="manageproduct.php?page='.($cr_page - 1 ).'">Previous</a>';
+	}
+	 for($i = 1; $i <= $total_page;$i++){ 
+	 	if($i == $cr_page){
+ 	 echo'<a class="active" href="#">'.$i.'</a>';
+ 	 }else{
+ 	 	 echo'<a class="page-link" href="manageproduct.php?page='.$i.'">'.$i.'</a>';
+ 	 }
+ 	}
+ 	if($cr_page < $total_page && $total_page > 1){
+  echo'<a class="page-link" href="manageproduct.php?page='.($cr_page + 1).'">Next</a>';
+  	}
+		echo'</div>
+		</div>';
+             ?>
+        </div>
+    </main>
+    <?php 
+    require 'footer.php'; ?>
+</div>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<?php
+ include 'cauhinh.php';
+ session_start();
+ if($_SESSION['quyen']!='1'){
+       echo '<script language="javascript">alert("Bạn không phải là admin"); 
+  window.location="login.php"</script>';
+}
+  $emptyErr = "";
+if($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if(empty($_POST['danhmuc'])) {
+            $emptyErr ="Bạn chưa nhập tên loại trang sức";
+        } else {
+            $add = "INSERT INTO `loaitrangsuc` (`maloaitrangsuc`, `tenloaitrangsuc`) VALUES (NULL, '".$_POST['danhmuc']."');";
+            $excute = mysqli_query($conn, $add);
+        }
+    }
+ ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Quản lý loại trang sức</title>
+	<link href="assets/css/bootstrap.css" rel="stylesheet"/>
+ 	  <link rel="shortcut icon" href="assets/ico/favicon.ico">
+       <script src="assets/js/jquery.js"></script>
+	<link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet">
+	   <style>
+        body::-webkit-scrollbar {
+            width: 0.25em;
+        }
+        body::-webkit-scrollbar-track {
+            background: #1e1e24;
+        }
+        body::-webkit-scrollbar-thumb {
+            background: #f1c40f;
+        }
+    </style>
+</head>
+<body>
+	<?php
+	include 'header.php';  
+	 ?>
+ <h1 class="text-center mt-2">Quản lý loại trang sức</h1>
+    <main>
+        <div class="container">
+            <div class="table-responsive-md">
+                <table class="table table-hover table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Mã loại trang sức</th>
+                            <th>Tên loại trang sức</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                            $query = "SELECT * FROM loaitrangsuc";
+                            $rs = mysqli_query($conn, $query);
+                            
+                            while($row = mysqli_fetch_assoc($rs)) {
+                                echo '<tr class="manage-category">
+                                        <td>'.$row['maloaitrangsuc'].'</td>
+                                        <td><a href="products.php?loaitrangsuc='.$row['maloaitrangsuc'].'">'.$row['tenloaitrangsuc'].'</a></td>
+                                               <td>
+                                            <div class="mb-1">
+                                                   <form action ="delete.php" method="GET">
+                                                    <input  type="hidden" name="idloaitrangsuc" value="'.$row['maloaitrangsuc'].'">
+                                                    <input class="btn btn-danger" type="submit" value="Xóa" name="delete-category">   
+                                                </form>
+                                                <div>
+                                                <a href="editcategory.php?idloaitrangsuc='.$row['maloaitrangsuc'].'" class="btn btn-primary">Sửa</a> 
+
+                                            </div>
+                                            </div>
+                                        </td>   
+                                    </tr>';
+                            }
+                        ?>
+                    <tbody>  
+                </table>
+                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="POST">
+                    <table class="table">
+                        <tr>
+                            <td>
+                                <input class="form-control" type="text" name="danhmuc" placeholder="Thêm loại trang sức">
+                                <span class="text-danger"><?php echo $emptyErr ?></span>
+                            </td>
+                            <td>
+                                <input class="form-control btn-success" type="submit" value="Thêm">
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <?php include 'footer.php' ?>
+    </div>
+</body>
+</html>
