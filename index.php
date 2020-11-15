@@ -2,21 +2,43 @@
 	
 require 'cauhinh.php';
 require 'pagination.php';
-if(isset($_GET['limit'])){
+$limit = 10;
+if(isset($_GET['search']) && $_GET['limit'] != ""){
 	$limit = $_GET['limit'];
+	if(isset($_SESSION['idthanhvien'])){
+		$id = $_SESSION['idthanhvien'];
+		setcookie($id,$limit,  time() + (86400*7) , "/");
+		header('Refresh:0');
+	}
 	$sql = "SELECT count(maloaitrangsuc) as 'total' from trangsuc ";
 $kq = mysqli_query($conn,$sql);
 $row = mysqli_fetch_assoc($kq);
-$total_rc = $row['total']; 
-$cr_page = isset($_GET['page'])? ($_GET['page']):1;
-$total_page = ceil($total_rc/$limit);
+$total_rc = $row['total'];
+$cr_page = isset($_GET['page']) ? ($_GET['page']):1;
+$limit1 = isset($_COOKIE[$id]) ? ($_COOKIE[$limit]):$limit;
+$total_page = ceil($total_rc/$limit1);
 if($cr_page>$total_page){
 	$cr_page = $total_page;
 }
 else if($cr_page<1){
 	$cr_page = 1;
 }
-$start = ($cr_page - 1)*$limit;
+$start = ($cr_page - 1)*$limit1;
+}
+$nhonhat="";
+$lonnhat="";
+if(isset($_GET['nhonhat'])|| isset($_GET['lonnhat'])){
+	$nhonhat = $_GET['nhonhat'];
+	$lonnhat = $_GET['lonnhat'];
+	if($_GET['nhonhat']!= "" && $_GET['lonnhat']!=""){
+		$sql = "AND `giaban` >= $nhonhat AND `giaban` <= $lonnhat ";
+	}
+	else if ($_GET['nhonhat']!=""){
+		$sql = "AND `giaban` >= $nhonhat ";
+	}
+	else if($_GET['lonnhat']!=""){
+		$sql="AND `giaban` <= $lonnhat ";
+	}
 }
 
 // 	if(isset($_GET['btn-search']) && $_GET['search'] != ''){
@@ -174,17 +196,28 @@ New Products
 		  </div>
 		<div class="well well-small">
 			<div class="row-fluid">
-				 <div class="col-md-2 text-right">
-          <label class="control-label label-arrange-category" for="input-limit">Hiển thị:</label>
-        </div>
+		
 		  <div class="col-md-2 text-right">
-          <select id="input-limit" class="form-control" onchange="location = this.value;">
-               <option value="index.php?limit=10" selected="selected">10</option>
-                 <option value="index.php?limit=20">20</option>
-               <option value="index.php?limit=30" >30</option>
-               <option value="index.php?limit=40">40</option>
-               <option value="index.php?limit=50">50</option>
-         </select>
+         <form action="index.php" method="get">
+         	<div class="row">
+         		<div class="col-md-4">
+         			<label for="limit">Nhập số lượng sản phẩm muốn thấy</label>
+         			<input type="number" style="width: 50px;"  min="0" name="limit" class="form-control" value="<?php echo $limit ?>">
+         		</div>
+         		<div class="col-md-4">
+         			<div class="row">
+         				<h5>Lọc theo giá</h5>
+         				<div class="col-md-6">
+         					<label for="nhonhat">Từ</label>
+         					<input type="number" min="0" style="width: 100px;" class="form-control" name="nhonhat" value="<?php echo $nhonhat ?>" >
+         					<label for="lonnhat">đến</label>
+         					<input type="number" min="0" style="width: 100px;" class="form-control" name="lonnhat" value="<?php echo $lonnhat ?>" >
+         				</div>
+         			</div>
+         			<div class="col-md-4"><button class="btn btn-primary" type="submit" name="search">Tìm</button></div>
+         		</div>
+         	</div>
+         </form>
         </div>
 		  <ul class="thumbnails">
 		  	<h3><a class="btn btn-mini pull-right" href="products.php" title="View more">Xem thêm<span class="icon-plus"></span></a> Sản phẩm của chúng tôi </h3>
@@ -192,7 +225,7 @@ New Products
 			<?php
 			if(isset($_GET['btn-search']) && $_GET['search'] != ''){
 				 $search = $_GET['search'];
-				$sql = "SELECT * FROM trangsuc where giaban < $search  ";
+				$sql = "SELECT * FROM trangsuc where tentrangsuc like '%$search%'  ";
 			$kq = mysqli_query($conn,$sql);
 			$num = mysqli_num_rows($kq);
             if ($num > 0) {
@@ -216,31 +249,55 @@ New Products
 			</li>';
 				 } 
 			
-	// 				 echo '<hr class="soften"/>
- //  <div class="center">
- //  	<div class="pagination">';
- //  	// echo $_SESSION['search'];
-	// 	if($cr_page1 > 1 && $total_page1 > 1){
-	//  echo'<a class="page-link" href="index.php?page='.($cr_page1 - 1 ).'$">Previous</a>';
-	// }
-	//  for($i = 1; $i <= $total_page1;$i++){ 
-	//  	if($i == $cr_page1){
- // 	 echo'<a class="active" href="#">'.$i.'</a>';
- // 	 }else{
- // 	 	 echo'<a class="page-link" href="index.php?page='.$i.'$">'.$i.'</a>';
- // 	 }
- // 	}
- // 	if($cr_page1 < $total_page1 && $total_page1 > 1){
- //  echo'<a class="page-link" href="index.php?page='.($cr_page1 + 1).'">Next</a>';
- //  	}
-	// echo'</div>
-	// 	</div>';
 	 }
 			else{
 				 echo "<h4> Kết quả tìm kiếm cho '<b>".$search."</b>': 0</h4>";
                 echo'<hr class="soften"/>';	
 			}
 		}
+			 elseif (isset($_GET['nhonhat'])|| isset($_GET['lonnhat'])) {
+	 $nhonhat = $_GET['nhonhat'];
+	$lonnhat = $_GET['lonnhat'];
+	if($_GET['nhonhat']!= "" && $_GET['lonnhat']!=""){
+		$sql = " `giaban` >= $nhonhat AND `giaban` <= $lonnhat ";
+	}
+	else if ($_GET['nhonhat']!=""){
+		$sql = "`giaban` >= $nhonhat ";
+	}
+	else {
+		$sql=" `giaban` <= $lonnhat ";
+	}
+		$sql = "SELECT * FROM trangsuc where $sql ";
+			$kq = mysqli_query($conn,$sql);
+			$num = mysqli_num_rows($kq);
+            if ($num > 0) {
+                echo "<h4> Kết quả tìm kiếm cho giá bán từ '<b>".$nhonhat." đến ".$lonnhat."</b>':".$num."</h4>";
+                echo'<hr class="soften"/>';	
+			while($row=mysqli_fetch_assoc($kq)){
+				 	 echo'  
+			<li class="span4">
+			  <div class="thumbnail">
+				<a class="zoomTool" href="product_details.php?idtrangsuc='.$row['matrangsuc'].'" title="Xem chi tiết"><span class="icon-search"></span> Xem chi tiết </a>
+				<a  href="product_details.php"><img src="'.$row['hinhanh'].'" alt=""></a>
+				<div class="caption">
+				  <h5>'.$row['tentrangsuc'].'</h5>
+				  <h4>
+					  <a class="defaultBtn" href="product_details.php?idtrangsuc='.$row['matrangsuc'].'" title="Click to view"><span class="icon-zoom-in"></span></a>
+					  <a class="shopBtn" href="addcart.php?item='.$row['matrangsuc'].'" title="add to cart"><span class="icon-plus"></span></a>
+					  <span class="pull-right">'.number_format($row['giaban']).'</span>
+				  </h4>
+				</div>
+			  </div>
+			</li>';
+				 } 
+			
+	 }
+			else{
+				 echo "<h4> Kết quả tìm kiếm: 0</h4>";
+                echo'<hr class="soften"/>';	
+			}
+		}
+
 		else{
 			$sql = "SELECT * FROM trangsuc limit $start,$limit ";
 			$kq = mysqli_query($conn,$sql);
