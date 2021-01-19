@@ -1,0 +1,16 @@
+<?php
+require 'cauhinh.php';
+if (isset($_POST['update'])) {
+	foreach ($_POST['soluong'] as $key => $value) {
+		if (($value == 0) && (is_numeric($value))) {
+			unset($_SESSION['cart'][$key]);
+			unset($_SESSION['soluong']);
+			unset($_SESSION['thanhtien']);
+		} else if (($value > 0) && (is_numeric($value))) {
+			$_SESSION['cart'][$key] = $value;
+		}
+	}
+}
+header("location:cart.php");
+exit();
+?>

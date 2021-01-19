@@ -7,18 +7,6 @@ if($_SESSION['quyen']!='1'){
 }
 require 'pagination.php'; 
  ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Quản lý trang sức</title>
-	<link href="assets/css/bootstrap.css" rel="stylesheet"/>
- 	  <link rel="shortcut icon" href="assets/ico/favicon.ico">
-       <script src="assets/js/jquery.js"></script>
-	<link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet">
-</head>
-<body>
 	<?php require 'header.php'; ?>
 	 <h1 class="text-center mt-2">Quản lý hàng hóa</h1>
     <main>
@@ -48,7 +36,7 @@ require 'pagination.php';
                                         <td><a href="product_details.php?idtrangsuc='.$row['matrangsuc'].'">'.$row['tentrangsuc'].'<br><img src="'.$row['hinhanh'].'" alt="anh" width="100" height="70"> </a></td>
                                         <td>'.$row['maloaitrangsuc'].'</td>
                                         <td>'.$row['soluong'].'</td>
-                                        <td>'.$row['giaban'].'</td>
+                                        <td>'.$row['giaban'].'<strong>VNĐ</strong></td>
                                         <td>'.$row['Thuonghieu'].'</td>
                                         <td>'.$row['Trongluong'].'</td>
                                         <td>'.$row['Tuoivang'].'</td>

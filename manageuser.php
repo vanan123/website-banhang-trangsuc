@@ -53,6 +53,22 @@ if($_SERVER['REQUEST_METHOD'] == 'GET') {
                         </tr>
                     </thead>
                     <tbody>
+                          <?php
+                        $sql = "SELECT count(mathanhvien) as 'total' from thanhvien";
+                        $kq = mysqli_query($conn,$sql);
+                        $row = mysqli_fetch_assoc($kq);
+                        $total_rc = $row['total']; 
+                        $cr_page = isset($_GET['page'])? ($_GET['page']):1;
+                        $limit = 10;
+                        $total_page = ceil($total_rc/$limit);
+                        if($cr_page>$total_page){
+                            $cr_page = $total_page;
+                        }
+                        else if($cr_page<1){
+                            $cr_page = 1;
+                        }
+                        $start = ($cr_page - 1)*$limit; 
+                         ?>
                         <?php
                             $query = "SELECT * FROM thanhvien where quyen = '0' order by mathanhvien asc ";
                             $rs = mysqli_query($conn, $query);
@@ -79,6 +95,26 @@ if($_SERVER['REQUEST_METHOD'] == 'GET') {
                     <tbody>  
                 </table>
             </div>
+             <?php 
+                 echo'<hr class="soften"/>
+  <div class="center">
+    <div class="pagination">';
+        if($cr_page > 1 && $total_page > 1){
+     echo'<a class="page-link" href="managepayment.php?page='.($cr_page - 1 ).'">Previous</a>';
+    }
+     for($i = 1; $i <= $total_page;$i++){ 
+        if($i == $cr_page){
+     echo'<a class="active" href="#">'.$i.'</a>';
+     }else{
+         echo'<a class="page-link" href="managepayment.php?page='.$i.'">'.$i.'</a>';
+     }
+    }
+    if($cr_page < $total_page && $total_page > 1){
+  echo'<a class="page-link" href="managepayment.php?page='.($cr_page + 1).'">Next</a>';
+    }
+        echo'</div>
+        </div>';
+             ?>
         </div>
     </main>
 

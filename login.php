@@ -45,7 +45,7 @@ require 'header.php'; ?>
 		<div class="span9">
 			<div class="well">
 			<h5>Đăng nhập</h5>
-			<form action="header.php" method="POST">
+			<form action="index.php" method="POST">
 			  <div class="control-group">
 				<label class="control-label" for="inputEmail">Email</label>
 				<div class="controls">
@@ -60,7 +60,7 @@ require 'header.php'; ?>
 			  </div>
 			  <div class="control-group">
 				<div class="controls">
-				  <button type="submit" class="defaultBtn" name="dangnhap1">Đăng nhập</button> <a href="#">Quên mật khẩu ?</a>
+				  <button type="submit" class="defaultBtn" name="dangnhap">Đăng nhập</button> <a href="#">Quên mật khẩu ?</a>
 				</div>
 			  </div>
 			</form>

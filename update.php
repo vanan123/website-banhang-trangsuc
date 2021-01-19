@@ -3,13 +3,18 @@ include 'cauhinh.php';
 
   if(isset($_POST['update'])) {
   		$id = $_POST['id'];
+      $targer_dir = "upload/";
+            $targer_file = $targer_dir.basename($_FILES['fileupload']['name']);
+           
+            if(move_uploaded_file($_FILES['fileupload']['tmp_name'],$targer_file)){
+    
         $edited = "UPDATE `trangsuc` SET 
         `tentrangsuc` = '".$_POST['tentrangsuc']."', 
         `maloaitrangsuc` = '".$_POST['loaitrangsuc']."', 
         `maloaivang` = '".$_POST['loaivang']."', 
         `giaban` = '".$_POST['giaban']."', 
         `soluong` = '".$_POST['soluong']."',
-        `hinhanh` = '".$_POST['anh']."',
+        `hinhanh` = '".$targer_file."',
         `Thuonghieu` = '".$_POST['thuonghieu']."',
         `Bosuutap` = '".$_POST['bosuutap']."',
         `Loaida` = '".$_POST['loaida']."',
@@ -29,4 +34,7 @@ include 'cauhinh.php';
         else echo '<script language="javascript">alert("Lỗi"); 
   window.location="editproduct.php";</script>';
      }
+      else echo '<script language="javascript">alert("Lỗi"); 
+  window.location="editproduct.php";</script>';
+   }
  ?>

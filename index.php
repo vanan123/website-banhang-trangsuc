@@ -2,29 +2,40 @@
 	
 require 'cauhinh.php';
 require 'pagination.php';
-$limit = 10;
-if(isset($_GET['search']) && $_GET['limit'] != ""){
-	$limit = $_GET['limit'];
-	if(isset($_SESSION['idthanhvien'])){
-		$id = $_SESSION['idthanhvien'];
-		setcookie($id,$limit,  time() + (86400*7) , "/");
-		header('Refresh:0');
+include("header.php");
+if(isset($_SESSION['limit_sp'])){
+$limits = $_SESSION['limit_sp'];
+}
+else {
+	$limits = 10;
 	}
-	$sql = "SELECT count(maloaitrangsuc) as 'total' from trangsuc ";
-$kq = mysqli_query($conn,$sql);
-$row = mysqli_fetch_assoc($kq);
-$total_rc = $row['total'];
-$cr_page = isset($_GET['page']) ? ($_GET['page']):1;
-$limit1 = isset($_COOKIE[$id]) ? ($_COOKIE[$limit]):$limit;
-$total_page = ceil($total_rc/$limit1);
-if($cr_page>$total_page){
-	$cr_page = $total_page;
+	
+$message="";
+
+if(isset($_GET['filter']) && isset($_GET['limit']) && $_GET['limit'] != ""){
+	$_SESSION['limit_sp'] = $_GET['limit'];
+	$limits = $_SESSION['limit_sp'];
+	 if(isset($_SESSION['idthanhvien'])){
+	 $id = $_SESSION['idthanhvien']; 	
+	 setcookie($id,$limits,  time() + (600) , "/");
+	  $limit1 = isset($_COOKIE[$id]) ? ($_COOKIE[$id]):$limits;
+ }
 }
-else if($cr_page<1){
-	$cr_page = 1;
-}
-$start = ($cr_page - 1)*$limit1;
-}
+$sql = "SELECT count(maloaitrangsuc) as 'total' from trangsuc ";
+  $kq = mysqli_query($conn,$sql);
+ $row = mysqli_fetch_assoc($kq);
+ $total_rc = $row['total'];
+ $cr_page = isset($_GET['page']) ? ($_GET['page']):1;
+ $limit2 = isset($limit1) ? $limit1 :$limits;
+ $total_page = ceil($total_rc/$limit2);
+
+ if($cr_page>$total_page){
+ 	$cr_page = $total_page;
+ }
+ else if($cr_page<1){
+ 	$cr_page = 1;
+ }
+ $start = ($cr_page - 1)*$limit2;
 $nhonhat="";
 $lonnhat="";
 if(isset($_GET['nhonhat'])|| isset($_GET['lonnhat'])){
@@ -41,47 +52,6 @@ if(isset($_GET['nhonhat'])|| isset($_GET['lonnhat'])){
 	}
 }
 
-// 	if(isset($_GET['btn-search']) && $_GET['search'] != ''){
-// $search = $_GET['search'];
-// $sql = "SELECT count(matrangsuc) as 'total' from trangsuc where (tentrangsuc like '%$search%' ) OR (Bosuutap like '%$search%') OR (Tuoivang like '%$search%') ";
-
-// $kq = mysqli_query($conn,$sql);
-// $num1 = mysqli_num_rows($kq);
-// $_SESSION['search'] = $num1;
-// $row = mysqli_fetch_assoc($kq);
-// $total_rc1 = $row['total']; 
-// $cr_page1 = isset($_GET['page'])? ($_GET['page']):1;
-// $limit = 10;
-// $total_page1 = ceil($total_rc1/$limit);
-// if($cr_page1>$total_page1){
-// 	$cr_page1 = $total_page1;
-// }
-// else if($cr_page1<1){
-// 	$cr_page1 = 1;
-// }
-// $start1 = ($cr_page1 - 1)*$limit;
-//}
-?>
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Cửa hàng trang sức AC</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <!-- Bootstrap styles -->
-    <link href="assets/css/bootstrap.css" rel="stylesheet"/>
-    <!-- Customize styles -->
-    <link href="style.css" rel="stylesheet"/>
-    <!-- font awesome styles -->
-	<link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet">
-		
-    <link rel="shortcut icon" href="assets/ico/favicon.ico">
-  </head>
-<body>
-<?php
-	include("header.php");
 ?>
 <!-- 
 Body Section 
@@ -134,28 +104,28 @@ New Products
 			  <ul class="thumbnails">
 				<li class="span3">
 				<div class="thumbnail">
-					<a class="zoomTool" href="product_details.php" title="add to cart"><span class="icon-search"></span> QUICK VIEW</a>
+					<a class="zoomTool" href="#" title="add to cart"><span class="icon-search"></span> QUICK VIEW</a>
 					<a href="#" class="tag"></a>
 					<a href="product_details.php"><img src="assets/img/bootstrap-ring.png" alt="bootstrap-ring"></a>
 				</div>
 				</li>
 				<li class="span3">
 				  <div class="thumbnail">
-					<a class="zoomTool" href="product_details.php" title="add to cart"><span class="icon-search"></span> QUICK VIEW</a>
+					<a class="zoomTool" href="#" title="add to cart"><span class="icon-search"></span> QUICK VIEW</a>
 					<a href="#" class="tag"></a>
 					<a  href="product_details.php"><img src="assets/img/i.jpg" alt=""></a>
 				  </div>
 				</li>
 				<li class="span3">
 				  <div class="thumbnail">
-					<a class="zoomTool" href="product_details.php" title="add to cart"><span class="icon-search"></span> QUICK VIEW</a>
+					<a class="zoomTool" href="#" title="add to cart"><span class="icon-search"></span> QUICK VIEW</a>
 					<a href="#" class="tag"></a>
 					<a  href="product_details.php"><img src="assets/img/g.jpg" alt=""></a>
 				  </div>
 				</li>
 				<li class="span3">
 				  <div class="thumbnail">
-					<a class="zoomTool" href="product_details.php" title="add to cart"><span class="icon-search"></span> QUICK VIEW</a>
+					<a class="zoomTool" href="#" title="add to cart"><span class="icon-search"></span> QUICK VIEW</a>
 					<a  href="product_details.php"><img src="assets/img/s.png" alt=""></a>
 				  </div>
 				</li>
@@ -165,25 +135,25 @@ New Products
 		  <ul class="thumbnails">
 			<li class="span3">
 			  <div class="thumbnail">
-				<a class="zoomTool" href="product_details.php" title="add to cart"><span class="icon-search"></span> QUICK VIEW</a>
+				<a class="zoomTool" href="#" title="add to cart"><span class="icon-search"></span> QUICK VIEW</a>
 				<a  href="product_details.php"><img src="assets/img/i.jpg" alt=""></a>
 			  </div>
 			</li>
 			<li class="span3">
 			  <div class="thumbnail">
-				<a class="zoomTool" href="product_details.php" title="add to cart"><span class="icon-search"></span> QUICK VIEW</a>
+				<a class="zoomTool" href="#" title="add to cart"><span class="icon-search"></span> QUICK VIEW</a>
 				<a  href="product_details.php"><img src="assets/img/f.jpg" alt=""></a>
 			  </div>
 			</li>
 			<li class="span3">
 			  <div class="thumbnail">
-				<a class="zoomTool" href="product_details.php" title="add to cart"><span class="icon-search"></span> QUICK VIEW</a>
+				<a class="zoomTool" href="#" title="add to cart"><span class="icon-search"></span> QUICK VIEW</a>
 				<a  href="product_details.php"><img src="assets/img/h.jpg" alt=""></a>
 			  </div>
 			</li>
 			<li class="span3">
 			  <div class="thumbnail">
-				<a class="zoomTool" href="product_details.php" title="add to cart"><span class="icon-search"></span> QUICK VIEW</a>
+				<a class="zoomTool" href="#" title="add to cart"><span class="icon-search"></span> QUICK VIEW</a>
 				<a  href="product_details.php"><img src="assets/img/j.jpg" alt=""></a>
 			  </div>
 			</li>
@@ -201,9 +171,14 @@ New Products
          <form action="index.php" method="get">
          	<div class="row">
          		<div class="col-md-4">
-         			<label for="limit">Nhập số lượng sản phẩm muốn thấy</label>
-         			<input type="number" style="width: 50px;"  min="0" name="limit" class="form-control" value="<?php echo $limit ?>">
+         			<label for="limit">Số lượng hiển thị</label>
+         			<input type="number" id="limit_sp" style="width: 50px;"  min="0" name="limit" class="form-control" value="<?php echo $limits ?>">
          		</div>
+         		<div class="col-md-4"><button class="btn btn-primary" type="submit" name="filter">Lọc</button></div>
+         	</div>
+         </form>
+         	<form action="index.php" method="get">
+         		<div class="row">
          		<div class="col-md-4">
          			<div class="row">
          				<h5>Lọc theo giá</h5>
@@ -225,11 +200,26 @@ New Products
 			<?php
 			if(isset($_GET['btn-search']) && $_GET['search'] != ''){
 				 $search = $_GET['search'];
-				$sql = "SELECT * FROM trangsuc where tentrangsuc like '%$search%'  ";
+				$sql = "SELECT count(maloaitrangsuc) as 'total' from trangsuc where tentrangsuc like '%$search%' ";
+  $kq = mysqli_query($conn,$sql);
+ $row = mysqli_fetch_assoc($kq);
+ $total_rc = $row['total'];
+ $cr_page = isset($_GET['page']) ? ($_GET['page']):1;
+ $limit2 = isset($limit1) ? $limit1 :$limits;
+ $total_page = ceil($total_rc/$limit2);
+
+ if($cr_page>$total_page){
+ 	$cr_page = $total_page;
+ }
+ else if($cr_page<1){
+ 	$cr_page = 1;
+ }
+ $start = ($cr_page - 1)*$limit2;
+				$sql = "SELECT * FROM trangsuc where tentrangsuc like '%$search%' limit $start,$limits  ";
 			$kq = mysqli_query($conn,$sql);
 			$num = mysqli_num_rows($kq);
             if ($num > 0) {
-                echo "<h4> Kết quả tìm kiếm cho '<b>".$search."</b>':".$num."</h4>";
+                echo "<h4> Kết quả tìm kiếm cho '<b>".$search."</b>':".$total_rc."</h4>";
                 echo'<hr class="soften"/>';	
 			while($row=mysqli_fetch_assoc($kq)){
 				 	 echo'  
@@ -248,7 +238,26 @@ New Products
 			  </div>
 			</li>';
 				 } 
-			
+			echo'</ul>	
+			  </div>
+		  <hr class="soften"/>
+  <div class="center">
+  	<div class="pagination">';
+		if($cr_page > 1 && $total_page > 1){
+	 echo'<a class="page-link" href="index.php?search=nhẫn&btn-search=&page='.($cr_page - 1 ).'">Previous</a>';
+	}
+	 for($i = 1; $i <= $total_page;$i++){ 
+	 	if($i == $cr_page){
+ 	 echo'<a class="active" href="#">'.$i.'</a>';
+ 	 }else{
+ 	 	 echo'<a class="page-link" href="index.php?search=nhẫn&btn-search=&page='.$i.'">'.$i.'</a>';
+ 	 }
+ 	}
+ 	if($cr_page < $total_page && $total_page > 1){
+  echo'<a class="page-link" href="index.php?search=nhẫn&btn-search=&page='.($cr_page + 1).'">Next</a>';
+  	}
+		echo'</div>
+		</div>';
 	 }
 			else{
 				 echo "<h4> Kết quả tìm kiếm cho '<b>".$search."</b>': 0</h4>";
@@ -260,18 +269,38 @@ New Products
 	$lonnhat = $_GET['lonnhat'];
 	if($_GET['nhonhat']!= "" && $_GET['lonnhat']!=""){
 		$sql = " `giaban` >= $nhonhat AND `giaban` <= $lonnhat ";
+		$message="<h4> Kết quả tìm kiếm cho giá bán từ '<b>".$nhonhat." đến ".$lonnhat ;
+		$link = "nhonhat=$nhonhat&lonnhat=$lonnhat&search=&";
 	}
 	else if ($_GET['nhonhat']!=""){
 		$sql = "`giaban` >= $nhonhat ";
+		$message="<h4>Kết quả tìm kiếm cho giá bán lớn hơn '<b>".$nhonhat ;
+			$link="nhonhat=$nhonhat&lonnhat=&search=&";
 	}
 	else {
 		$sql=" `giaban` <= $lonnhat ";
+		$message="<h4>Kết quả tìm kiếm cho giá bán nhỏ hơn '<b>".$lonnhat;
+			$link="nhonhat=&lonnhat=$lonnhat&search=&";
 	}
-		$sql = "SELECT * FROM trangsuc where $sql ";
+		$sql1 = "SELECT count(maloaitrangsuc) as 'total' from trangsuc where $sql ";
+  $kq1 = mysqli_query($conn,$sql1);
+ $row1 = mysqli_fetch_assoc($kq1);
+ $total_rc = $row1['total'];
+ $cr_page = isset($_GET['page']) ? ($_GET['page']):1;
+ $limit2 = isset($limit1) ? $limit1 :$limits;
+ $total_page = ceil($total_rc/$limit2);
+
+ if($cr_page>$total_page){
+ 	$cr_page = $total_page;
+ }
+ else if($cr_page<1){
+ 	$cr_page = 1;
+ }
+		$sql = "SELECT * FROM trangsuc where $sql limit $start,$limits ";
 			$kq = mysqli_query($conn,$sql);
 			$num = mysqli_num_rows($kq);
             if ($num > 0) {
-                echo "<h4> Kết quả tìm kiếm cho giá bán từ '<b>".$nhonhat." đến ".$lonnhat."</b>':".$num."</h4>";
+                echo $message."</b>':".$total_rc."</h4>";
                 echo'<hr class="soften"/>';	
 			while($row=mysqli_fetch_assoc($kq)){
 				 	 echo'  
@@ -289,7 +318,27 @@ New Products
 				</div>
 			  </div>
 			</li>';
-				 } 
+				 }
+				 echo'</ul>	
+			  </div>
+		  <hr class="soften"/>
+  <div class="center">
+  	<div class="pagination">';
+		if($cr_page > 1 && $total_page > 1){
+	 echo'<a class="page-link" href="index.php?'.$link.'page='.($cr_page - 1 ).'">Previous</a>';
+	}
+	 for($i = 1; $i <= $total_page;$i++){ 
+	 	if($i == $cr_page){
+ 	 echo'<a class="active" href="#">'.$i.'</a>';
+ 	 }else{
+ 	 	 echo'<a class="page-link" href="index.php?'.$link.'page='.$i.'">'.$i.'</a>';
+ 	 }
+ 	}
+ 	if($cr_page < $total_page && $total_page > 1){
+  echo'<a class="page-link" href="index.php?'.$link.'page='.($cr_page + 1).'">Next</a>';
+  	}
+		echo'</div>
+		</div>'; 
 			
 	 }
 			else{
@@ -299,7 +348,7 @@ New Products
 		}
 
 		else{
-			$sql = "SELECT * FROM trangsuc limit $start,$limit ";
+			$sql = "SELECT * FROM trangsuc limit $start,$limits ";
 			$kq = mysqli_query($conn,$sql);
 			while($row=mysqli_fetch_assoc($kq)){
 		  echo'

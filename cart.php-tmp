@@ -1,56 +1,20 @@
 <?php
+require 'header.php';
+?>
+<?php
 require 'cauhinh.php';
-
 if (isset($_POST['update'])) {
 	foreach ($_POST['soluong'] as $key => $value) {
-		if (($value == 0) and (is_numeric($value))) {
+		if (($value == 0) && (is_numeric($value))) {
 			unset($_SESSION['cart'][$key]);
 			unset($_SESSION['soluong']);
 			unset($_SESSION['thanhtien']);
-		} else if (($value > 0) and (is_numeric($value))) {
+		} else if (($value > 0) && (is_numeric($value))) {
 			$_SESSION['cart'][$key] = $value;
 		}
 	}
-	header("location:cart.php");
 }
 
-?>
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Cửa hàng trang sức AC</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <!-- Bootstrap styles -->
-    <link href="assets/css/bootstrap.css" rel="stylesheet"/>
-    <!-- Customize styles -->
-    <link href="style.css" rel="stylesheet"/>
-    <!-- font awesome styles -->
-	<link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet">
-		<!--[if IE 7]>
-			<link href="css/font-awesome-ie7.min.css" rel="stylesheet">
-		<![endif]-->
-
-		<!--[if lt IE 9]>
-			<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-		<![endif]-->
-
-	<!-- Favicons -->
-    <link rel="shortcut icon" href="assets/ico/favicon.ico">
-  </head>
-<body>
-<!--
-	Upper Header Section
--->
-
-
-<!--
-Lower Header Section
--->
-<?php
-require 'header.php';
 ?>
 <!--
 Body Section
@@ -63,12 +27,6 @@ Body Section
     </ul>
 	<div class="well well-small">
 <?php
-// if(isset($_SESSION['soluong'])){
-// 	echo '<h1>Giỏ hàng <small class="pull-right"> '.$_SESSION['soluong'].' sản phẩm trong giỏ hàng </small></h1>';
-// }
-// else{
-// 	echo '<h1>Giỏ hàng <small class="pull-right"> 0 sản phẩm trong giỏ hàng </small></h1>';
-// }
 $ok = 1;
 if (isset($_SESSION['cart'])) {
 	foreach ($_SESSION['cart'] as $key => $value) {
@@ -80,27 +38,16 @@ if (isset($_SESSION['cart'])) {
 }
 if ($ok != 2) {
 	echo '<h1>Giỏ hàng <small class="pull-right"> 0 sản phẩm trong giỏ hàng </small></h1>';
+	echo '<br><a href="index.php" class="shopBtn btn-large"><span class="icon-arrow-left"></span> Tiếp tục mua hàng </a>';
 } else {
 	$item = $_SESSION['cart'];
 	echo '<h1>Giỏ hàng <small class="pull-right">'.count($item).' sản phẩm trong giỏ hàng </small></h1>';
-}
-?>
-		<?php
-$ok = 1;
-if (isset($_SESSION['cart'])) {
-	foreach ($_SESSION['cart'] as $k => $v) {
-		if (isset($k)) {
-			$ok = 2;
-		}
-	}
-}
-if ($ok == 2) {
 	echo "<form action='cart.php' method='POST'>";
 	foreach ($_SESSION['cart'] as $key => $value) {
 		$items[] = $key;
 	}
 	$str                      = implode(",", $items);
-	$sql                      = "SELECT * FROM trangsuc Where matrangsuc in ($str)";
+	$sql                      = "SELECT * FROM trangsuc Where matrangsuc in ($str) order by matrangsuc desc";
 	$kq                       = mysqli_query($conn, $sql);
 	$sql1                     = "SELECT * FROM trangsuc Where matrangsuc in ($str)";
 	$kq1                      = mysqli_query($conn, $sql1);
@@ -127,7 +74,7 @@ if ($ok == 2) {
                   <td class="product"><a href="product_details.php?idtrangsuc='.$row['matrangsuc'].'">'.$row['tentrangsuc'].'</a></td>
                   <td>'.number_format($row['giaban']).'</td>
                   <td>
-					<input class="span1" style="max-width:34px" id="appendedInputButtons" size="16" type="text" name="soluong['.$row['matrangsuc'].']" size="5" value="'.$_SESSION["cart"][$row["matrangsuc"]].'">
+					<input class="span1" style="max-width:34px" size="16" min="0" type="number" name="soluong['.$row['matrangsuc'].']" size="5" value="'.$_SESSION["cart"][$row["matrangsuc"]].'">
 				  <div class="input-append">
 					<button class="btn  btn-danger remove" type="button"><a href="delcart.php?idtrangsuc='.$row['matrangsuc'].'"><span class="icon-remove"></span></a></button>
 				</div>
@@ -159,8 +106,6 @@ if ($ok == 2) {
 		echo '<a href="payment.php" class="shopBtn btn-large pull-right">Thanh toán <span class="icon-arrow-right"></span></a>';
 	}
 	echo "</form>";
-} else {
-	echo '<a href="index.php" class="shopBtn btn-large"><span class="icon-arrow-left"></span> Tiếp tục mua hàng </a>';
 }
 
 ?>

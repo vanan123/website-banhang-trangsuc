@@ -32,3 +32,4 @@ $('.thumbnail').mouseleave(function() {
 	});
 
 });
+

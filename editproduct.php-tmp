@@ -24,7 +24,8 @@ if (isset($_GET['idtrangsuc'])) {
 		$trongluong   = $row['Trongluong'];
 		$chungloai    = $row['Chungloai'];
 		$tuoivang     = $row['Tuoivang'];
-		$anh          = $row['hinhanh'];
+		$anh          = $row["hinhanh"];
+		$path_anh     = basename($anh);
 
 		?>
 		<!DOCTYPE html>
@@ -38,7 +39,7 @@ if (isset($_GET['idtrangsuc'])) {
 		       <script src="assets/js/jquery.js"></script>
 			<link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet">
 		 <script src="https://cdn.ckeditor.com/4.15.0/standard/ckeditor.js"></script>
-		</head>
+		 <script src="assets/js/img.js"></script>
 		 <style>
 		        .hide {
 		            display: none;
@@ -62,6 +63,7 @@ if (isset($_GET['idtrangsuc'])) {
 		            }
 		        }
 		    </style>
+		    </head>
 		<body>
 		<?php
 		include 'header.php';?>
@@ -70,7 +72,7 @@ if (isset($_GET['idtrangsuc'])) {
 
 		        <div class="container">
 		            <div class="editorCont">
-		                <form action="update.php" method="POST">
+		                <form action="update.php" method="POST" enctype="multipart/form-data">
 		                    <div class="form-group">
 		                        <label for="name">ID: </label>
 		                        <input type="hidden" class="form-control" name="id" id="id" value="<?php echo $id?>" ><?php echo $id?>
@@ -78,6 +80,13 @@ if (isset($_GET['idtrangsuc'])) {
 		                    <div class="form-group">
 		                        <label for="tentrangsuc">Tên trang sức: </label>
 		                        <input type="text" class="form-control" name="tentrangsuc" id="pname" placeholder="Tên sản phẩm" value="<?php echo $tentrangsuc?>">
+		                    </div>
+		                       <div class="form-group">
+		                        <label for="anh">Ảnh: </label>
+		                        <img id="image1" width="150px" height="100px" src="<?php echo $anh?>" alt="anh1">
+		                        <button id="files" onclick="document.getElementById('fileupload').click();return false;">Đăng ảnh</button>
+		                        <input type="file" onchange="readURL(this);" accept="image/*" name="fileupload" id="fileupload" style="visibility: hidden;">
+
 		                    </div>
 		                    <div class="form-group">
 		                        <label for="loaitrangsuc">Loại trang sức: </label>
@@ -158,10 +167,7 @@ if (isset($_GET['idtrangsuc'])) {
 		                        <label for="">Tuổi vàng: </label>
 		                        <input type="text" class="form-control" name="tuoivang"  placeholder="Tuổi vàng" value="<?php echo $tuoivang?>">
 		                    </div>
-		                    <div class="form-group">
-		                        <label for="anh">Link ảnh: </label>
-		                        <input placeholder="Link ảnh" type="text" class="form-control" name="anh" id="pimage" value="<?php echo $anh?>">
-		                    </div>
+
 		                    <div class="form-group">
 		                        <input class="btn btn-warning w-100" name="update" type="submit" value="Cập nhật">
 		                    </div>

@@ -6,14 +6,20 @@ if($_SESSION['quyen']!='1'){
   window.location="login.php"</script>';
 }
 $id = $_REQUEST['idtrangsuc'];
- if(isset($_POST['add'])) {
+ if($_SERVER["REQUEST_METHOD"] == "POST") {
+      $targer_dir = "upload/";
+            $targer_file = $targer_dir.basename($_FILES['fileupload']['name']);
+           
+            move_uploaded_file($_FILES['fileupload']['tmp_name'],$targer_file);
+            $flag = true;
+            $anh = $targer_file;
         $add = "INSERT INTO `trangsuc`(tentrangsuc,maloaitrangsuc,maloaivang,giaban,soluong,hinhanh,Thuonghieu,Bosuutap,Loaida,Mauda,Hinhdang,Diptang,Trongluong,Chungloai,Tuoivang) VALUES (  
         '".$_POST['tentrangsuc']."', 
         '".$_POST['loaitrangsuc']."', 
         '".$_POST['loaivang']."', 
         '".$_POST['giaban']."', 
         '".$_POST['soluong']."',
-        '".$_POST['anh']."',
+        '".$anh."',
         '".$_POST['thuonghieu']."',
         '".$_POST['bosuutap']."',
         '".$_POST['loaida']."',
@@ -25,12 +31,12 @@ $id = $_REQUEST['idtrangsuc'];
         '".$_POST['tuoivang']."')";
 
         $added = mysqli_query($conn, $add);
-        if(isset($added)){
-          echo '<script language="javascript">alert("Thêm sản phẩm thành công"); 
-  window.location="manageproduct.php"</script>';
-        }
-        else echo '<script language="javascript">alert("Lỗi"); 
-  window.location="addproduct.php";</script>';
+         if(isset($added)){
+            echo '<script language="javascript">alert("Thêm sản phẩm thành công"); 
+    window.location="manageproduct.php"</script>';
+          }
+          else echo '<script language="javascript">alert("Lỗi"); 
+    window.location="addproduct.php";</script>';
     }
  ?>
 <!DOCTYPE html>
@@ -44,6 +50,7 @@ $id = $_REQUEST['idtrangsuc'];
        <script src="assets/js/jquery.js"></script>
   <link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet">
  <script src="https://cdn.ckeditor.com/4.15.0/standard/ckeditor.js"></script>
+ <script src="assets/js/img.js"></script>
 </head>
  <style>
         .hide {
@@ -76,10 +83,16 @@ $id = $_REQUEST['idtrangsuc'];
 
         <div class="container">
             <div class="editorCont">
-                <form action="addproduct.php" method="POST">
+                <form action="addproduct.php" method="POST" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="tentrangsuc">Tên trang sức: </label>
                         <input type="text" class="form-control" name="tentrangsuc" id="pname" placeholder="Tên sản phẩm" >
+                    </div>
+                     <div class="form-group">
+                        <label for="anh">Ảnh </label>
+                      <img id="image1">
+                      <button id="files" onclick="document.getElementById('fileupload').click();return false;">Đăng ảnh</button>
+                        <input type="file" onchange="readURL(this);" accept="image/*" name="fileupload" id="fileupload" style="visibility: hidden;">
                     </div>
                     <div class="form-group">
                         <label for="loaitrangsuc">Loại trang sức: </label>
@@ -159,10 +172,6 @@ $id = $_REQUEST['idtrangsuc'];
                       <div class="form-group">
                         <label for="">Tuổi vàng: </label>
                         <input type="text" class="form-control" name="tuoivang"  placeholder="Tuổi vàng" >
-                    </div>
-                    <div class="form-group">
-                        <label for="anh">Link ảnh: </label>
-                        <input placeholder="Link ảnh" type="text" class="form-control" name="anh" id="pimage" >
                     </div>
                     <div class="form-group">
                         <input class="btn btn-warning w-100" name="add" type="submit" value="Thêm">

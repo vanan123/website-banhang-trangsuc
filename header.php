@@ -2,7 +2,6 @@
 include 'cauhinh.php';
 session_start();
 ob_start();
-
 if (isset($_POST['dangnhap'])){
     $email=$_POST['email'];
     $pass =md5($_POST['pass']);
@@ -33,38 +32,13 @@ window.location="index.php";</script>';
     session_unset();
  
 }
-if (isset($_POST['dangnhap1'])){
-    $email=$_POST['email'];
-    $pass =md5($_POST['pass']);
-$sql = "SELECT * From thanhvien WHERE email='$email' and matkhau='$pass'";
-$kq = mysqli_query($conn,$sql);
-if(mysqli_num_rows($kq)>0){
-$row = mysqli_fetch_assoc($kq);
-$_SESSION['name'] = $row['hoten'];
-$_SESSION['idthanhvien'] = $row['mathanhvien'];
-$_SESSION['quyen'] = $row['quyen'];
-if($_SESSION['name']){
-echo '<script language="javascript">alert("Đăng nhập thành công"); 
-window.location="cart.php";</script>';
-}
 
- else{
- 	 echo '<script language="javascript">alert("Email hoặc mật khẩu sai"); 
-  window.location="login.php";</script>';
- }
-}else{
-	 echo '<script language="javascript">alert("Email hoặc mật khẩu sai"); 
-  window.location="login.php";</script>';
-}
-}
 elseif(isset($_POST['dangxuat'])){
  	echo '<script language="javascript">alert("Đăng xuất thành công"); 
 window.location="index.php";</script>';
     session_unset();
  
 }
-
-
  ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -77,7 +51,7 @@ window.location="index.php";</script>';
     <!-- Bootstrap styles -->
     <link href="assets/css/bootstrap.css" rel="stylesheet"/>
     <!-- Customize styles -->
-    <link href="style.css" rel="stylesheet"/>
+    <link href="css/style.css" rel="stylesheet"/>
     <!-- font awesome styles -->
 	<link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet">
   	
@@ -88,7 +62,7 @@ window.location="index.php";</script>';
     <script src="assets/js/jquery.scrollTo-1.4.3.1-min.js"></script>
     <script src="assets/js/shop.js"></script>
     <script src="assets/js/ajax.js"></script>
-
+    <script src="assets/js/img.js"></script>
   </head>
 <body>
 <!-- 
@@ -189,6 +163,12 @@ Navigation Bar Section
 				   <div class="control-group">
 				 		<a href="manageuser.php"> Quản lý khách hàng</a> 
 				   </div>
+				     <div class="control-group">
+				 		<a href="managepayment.php"> Quản lý hóa đơn</a> 
+				   </div>
+				   <div class="control-group">
+				 		<a href="managecomment.php"> Quản lý bình luận</a> 
+				   </div>
 				 </form>
 				 </div>
 				</li>
@@ -206,7 +186,7 @@ Navigation Bar Section
 			</form>
 
 			<?php 
-			if(isset($_SESSION['name'])){
+			if(isset($_SESSION['quyen'])){
 				// echo $_SESSION['name'];
 				  // echo '<p class="text-white">'.$_SESSION['name'].'
       //               <a href="login.php">Đăng xuất</a></p>';
@@ -215,8 +195,11 @@ Navigation Bar Section
 				<a data-toggle="dropdown" class="dropdown-toggle" href="#"><span class="icon-user"><i class="fas fa-user"></i> '.$_SESSION['name'].' </span><b class="caret"></b></a>
 				 <div class="dropdown-menu">
 				 <form class="form-horizontal loginFrm" action="header.php" method="post">
-				   <div class="control-group">
-				 		<a href="#"><span class="icon-user"></span> Quản lí tài khoản</a> 
+				   <div class="control-group">';
+				   if($_SESSION['quyen'] == 0 ){
+				 		echo'<a href="mypayment.php"><span class="icon-check"></span> Đơn hàng của tôi</a>'; 
+				   }
+				   echo'
 				   </div>
 				   <div class="control-group">
 				 	<button type="submit" class="shopBtn btn-block" name="dangxuat">Đăng xuất</button>
@@ -258,6 +241,9 @@ Navigation Bar Section
 <!-- 
 Body Section 
 -->
+<!-- 
+</body>
+</html>
 <?php
-ob_end_flush(); 
- ?>
+
+ ?> -->

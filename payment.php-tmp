@@ -1,6 +1,9 @@
 <?php
 require 'cauhinh.php';
 session_start();
+if (!isset($_SESSION['idthanhvien'])) {
+	header("location:login.php");
+}
 if (isset($_POST['submit'])) {
 	$thanhtien      = $_SESSION['thanhtien'];
 	$mathanhvien    = $_SESSION['idthanhvien'];
@@ -12,58 +15,54 @@ if (isset($_POST['submit'])) {
 	$email          = $_POST['email'];
 	$CVV            = md5($_POST['cvv']);
 	$diachigiaohang = $_POST['address'];
-
+	$items          = array();
 	foreach ($_SESSION['cart'] as $key => $value) {
-		$items[]   = $key;
-		$items_q[] = $value;
+		$soluong  = mysqli_fetch_row(mysqli_query($conn, "SELECT soluong FROM trangsuc WHERE matrangsuc = ".$key))[0];
+		$slconlai = (intval($soluong)-intval($value));
+		if ($slconlai < 0) {
+			$mess = "Sản phẩm không đủ trong kho";
+		} else {
+			$kq = mysqli_query($conn, "UPDATE trangsuc SET `soluong`= ".$slconlai." WHERE matrangsuc = ".$key);
+		}
+		$item[$key] = $value;
 	}
-	$matrangsuc = implode(",", $items);
-	$soluong    = implode(",", $items_q);
-	$sql        = "INSERT INTO hoadon (`mathe`,`mathanhvien`,`matrangsuc`,`soluong`,`ngaylap`,`tongtien`,`diachigiaohang`) VALUES ('".$sothe."','".$mathanhvien."','".$matrangsuc."','".$soluong."','".$date."','".$thanhtien."','".$diachigiaohang."')";
-	$kq         = mysqli_query($conn, $sql);
-	$sql1       = "INSERT INTO thethanhtoan (`mathe`,`tentrenthe`,`CVV`) VALUES ('".$sothe."','".$tentrenthe."','".$CVV."')";
-	$kq1        = mysqli_query($conn, $sql1);
-	unset($_SESSION['soluong']);
-	unset($_SESSION['thanhtien'])
-	// $query = mysqli_query($conn, "SELECT `mahoadon` FROM `hoadon` ORDER BY mahoadon desc");
-	//      $getid = mysqli_fetch_row($query);
-	//       $directory = "D:\\";
-	//      $filename = $directory . $date . $mathanhvien . $getid[0] .".txt";
-	//      $inhoadon = fopen($filename, "w") or die("");
-	//      fwrite($inhoadon, "-------------HÓA ĐƠN THANH TOÁN CỦA BẠN----------------\n");
-	//      fwrite($inhoadon, $mathanhvien .".". $hoten ."\n\n");
-	//      fwrite($inhoadon, "Địa chỉ: ". $diachigiaohang . ", SĐT: " . $sdt. ", Email: ". $email ."\n\n ----------\n");
-	//      $sql = "SELECT * FROM `trangsuc` WHERE matrangsuc in ($productid) order by matrangsuc desc";
-	//      $query = mysqli_query($conn, $sql);
-	//      $total = 0;
-	//      while($row = mysqli_fetch_assoc($query)>0) {
-	//          $txt = $row['tentrangsuc'] . " ;Đơn giá: " . $row['giaban'] . " ;Số lượng: " . $_SESSION['cart'][$row['matrangsuc']]."\n";
-
-	//          fwrite($inhoadon, $txt);
-	//          $total += $_SESSION['cart'][$row['matrangsuc']] * $row['giaban'];
-	//      }
-	//      fwrite($inhoadon, "----------\n\nThành tiền: ".number_format($total));
-	//      fclose($inhoadon);
-	if (isset($kq) && isset($kq1)) {
-		echo '<script language="javascript">alert("Thanh toán thành công.Hàng của bạn sẽ sớm chuyển tới");
-window.location="payment.php";
-</script>';
+	if (!isset($mess)) {
+		$sql3  = "INSERT INTO thethanhtoan (`mathe`,`tentrenthe`,`CVV`) VALUES ('".$sothe."','".$tentrenthe."','".$CVV."')";
+		$kq3   = mysqli_query($conn, $sql3);
+		$sql1  = "INSERT INTO hoadon (`mathe`,`mathanhvien`,`ngaylap`,`tongtien`,`email`,`sdt`,`diachigiaohang`,`trangthai`) VALUES ('".$sothe."','".$mathanhvien."','".$date."','".$thanhtien."','".$email."','".$sdt."','".$diachigiaohang."',0)";
+		$kq1   = mysqli_query($conn, $sql1);
+		$query = mysqli_query($conn, "SELECT mahoadon FROM hoadon ORDER BY mahoadon desc");
+		$getid = mysqli_fetch_row($query);
+		foreach ($item as $k => $v) {
+			$sql2   = "INSERT INTO hoadonchitiet (`idhoadon`,`idtrangsuc`,`soluongdaban`) VALUES ('".$getid[0]."','".$k."','".$v."')";
+			$kq2    = mysqli_query($conn, $sql2);
+			$item[] = $k;
+		}
 	} else {
-		echo '<script language="javascript">alert("Lỗi");
-window.location="payment.php";
+		echo '<script language="javascript">
+    alert("'.$mess.'");
+     window.location="cart.php";
 </script>';
+	}
+	if (isset($kq1) && isset($kq3) && isset($kq) && isset($kq2)) {
+		echo '<script language="javascript">alert("Thanh toán thành công.Hàng của bạn sẽ sớm chuyển tới");window.location="mypayment.php" </script>';
+
+		unset($_SESSION['soluong']);
+		unset($_SESSION['thanhtien']);
+		unset($_SESSION['cart']);
 	}
 }
 
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
 	<title>Giỏ hàng</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="payment.css">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../giuaky/css/payment.css">
+<link rel="stylesheet" href="../giuaky/css/style.css">
 </head>
 <body>
 <h2>Thanh toán</h2>
@@ -76,7 +75,7 @@ window.location="payment.php";
 <div class="row">
   <div class="col-75">
     <div class="container">
-      <form action="payment.php" method="POST">
+      <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="POST">
 
         <div class="row">
           <div class="col-50">
@@ -112,6 +111,10 @@ window.location="payment.php";
           <input type="checkbox" checked="checked" name="sameadr"> Giao hàng tới địa chỉ này
         </label>
         <input type="submit" value="Thanh toán" class="btn" name="submit">
+        <input type="reset" class="btn btn-danger" value="Hủy">
+        <br>
+        <br>
+        <a href="cart.php" class="btn btn-warning">Quay lại giỏ hàng</a>
       </form>
     </div>
   </div>
